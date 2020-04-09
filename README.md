@@ -9,14 +9,25 @@
 * A new method for branch selection that is valid at high frequencies (unlike group delay) and does not suffer from truncation error (unlike the conventional Kramers-Kronig method)
 * Nonlinear least-squares optimization of permittivity and permeability as described by  Domich, Baker-Jarvis, and Geyer [5,6]
 
-![Branch selection](images/branch_rationalfit.jpg)*Automatic branch determination using new rational fit method*
+<figure>
+  <img src="https://github.com/jdhuang-csm/scatter-opt/blob/master/images/branch_rationalfit.jpg" width="700">
+  <figcaption><i>Automatic branch determination using new rational fit method</i></figcaption>
+</figure>
 
-![Extracted permittivity and permeability](images/tef_nrw.jpg)*Permittivity and permeability extracted via the NRW method*
+<figure>
+  <img src="https://github.com/jdhuang-csm/scatter-opt/blob/master/images/tef_nrw.jpg" width="700">
+  <figcaption><i>Permittivity and permeability extracted via the NRW method</i></figcaption>
+</figure>
+  
+<figure>
+  <img src="https://github.com/jdhuang-csm/scatter-opt/blob/master/images/tef_PPfit.jpg" width="700">
+  <figcaption><i>Optimized permittivity and permeability</i></figcaption>
+</figure>
 
-![Optimized permittivity and permeability](images/tef_PPfit.jpg)*Optimized permittivity and permeability*
-
-![Optimized S parameter fit](images/tef_Sfit.jpg)*Optimized fit of measured S parameters*
-
+<figure>
+  <img src="https://github.com/jdhuang-csm/scatter-opt/blob/master/images/tef_Sfit.jpg" width="700">
+  <figcaption><i>Optimized fit of measured S parameters</i></figcaption>
+</figure>
 
 References
 1. Nicolson, A. M., & Ross, G. F. (1970). Measurement of the Intrinsic Properties Of Materials by Time-Domain Techniques. *IEEE Transactions on Instrumentation and Measurement, 19*(4), 377–382. https://doi.org/10.1109/TIM.1970.4313932
