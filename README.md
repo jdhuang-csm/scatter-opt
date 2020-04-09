@@ -2,12 +2,21 @@
 `scatter_opt` is a MatLab package for processing electromagnetic scattering parameter data.
 
 ## Features
-`scatter_opt` currently implements:
+`scatter_opt` currently implements the following with a user-friendly programmatic interface:
 * Nicholson-Ross-Weir (NRW) [1,2] and new non-iterative (NNI) [3] methods for permittivity and permeability extraction from S parameters
 * Group delay method for branch selection as described by Weir [2]
 * Kramers-Kronig method for branch selection as described by Szabó et al. [4]
 * A new method for branch selection that is valid at high frequencies (unlike group delay) and does not suffer from truncation error (unlike the conventional Kramers-Kronig method)
 * Nonlinear least-squares optimization of permittivity and permeability as described by  Domich, Baker-Jarvis, and Geyer [5,6]
+
+![Branch selection](images/branch_rationalfit.jpg)*Automatic branch determination using new rational fit method*
+
+![Extracted permittivity and permeability](images/tef_nrw.jpg)*Permittivity and permeability extracted via the NRW method*
+
+![Optimized permittivity and permeability](images/tef_PPfit.jpg)*Optimized permittivity and permeability*
+
+![Optimized S parameter fit](images/tef_Sfit.jpg)*Optimized fit of measured S parameters*
+
 
 References
 1. Nicolson, A. M., & Ross, G. F. (1970). Measurement of the Intrinsic Properties Of Materials by Time-Domain Techniques. *IEEE Transactions on Instrumentation and Measurement, 19*(4), 377–382. https://doi.org/10.1109/TIM.1970.4313932
