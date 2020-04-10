@@ -1,4 +1,4 @@
-# Scatter parameter extraction and optimization
+# Scattering parameter extraction and optimization
 `scatter_opt` is a MatLab package for processing electromagnetic scattering parameter data.
 
 ## Features
