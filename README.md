@@ -1,8 +1,11 @@
 # Scattering parameter extraction and optimization
 `scatter_opt` is a MatLab package for processing electromagnetic scattering parameter data.
 
+## Documentation
+The "scatter-opt documentation" Word document walks through a fitting example and provides class and function documentation. Unfortunately, I am not in a position to provide support for this package, but hopefully the example will help you get started.
+
 ## Features
-`scatter_opt` currently implements the following with a user-friendly programmatic interface:
+`scatter_opt` currently implements the following techniques:
 * Nicholson-Ross-Weir (NRW) [1,2] and new non-iterative (NNI) [3] methods for permittivity and permeability extraction from S parameters
 * Group delay method for branch selection as described by Weir [2]
 * Kramers-Kronig method for branch selection as described by Szabó et al. [4]
