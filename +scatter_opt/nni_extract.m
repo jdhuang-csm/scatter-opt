@@ -1,4 +1,4 @@
-function out = nni_extract(Sdata,L,lambda_c,varargin)
+function out = nni_extract(Sdata,L,L_air,lambda_c,varargin)
 % Compute mu and epsilon from s11 and s21 following method in Rhode &
 % Schwarz Annex 4.
 % Parameters
