@@ -2,7 +2,7 @@
 `scatter_opt` is a MatLab package for processing electromagnetic scattering parameter data.
 
 ## Documentation
-The "scatter-opt documentation" Word document walks through a fitting example and provides class and function documentation. Unfortunately, I am not in a position to provide support for this package, but hopefully the example will help you get started.
+The "scatter-opt documentation" Word document walks through a fitting example and provides class and function documentation. In addition, the file fitting_examples_0408.m provides the code for the full fitting process with several different options shown. Unfortunately, I am not in a position to provide support for this package, but hopefully these examples will help you get started.
 
 ## Features
 `scatter_opt` currently implements the following techniques:
