@@ -27,18 +27,19 @@ classdef Sproc < handle
            end
        % Data processing
            function load(obj,file,varargin)
+			   import scatter_opt.*
                parser = inputParser;
                addOptional(parser,'HeaderLines',0)
                addOptional(parser,'Delimiter',' ')
                addParameter(parser,'PhaseCorrect',false)
                parse(parser,varargin{:})
-               obj.Sdata = scatter_opt.loadconvert_raw(file,...
+               obj.Sdata = loadconvert_raw(file,...
                    'HeaderLines',parser.Results.HeaderLines,...
                    'Delimiter',parser.Results.Delimiter);
                if parser.Results.PhaseCorrect
                    % apply phase correction to S21 and S12 to account for 
                    % transmission line length displaced by sample
-                   gam0 = scatter_opt.rev_gamma_0(obj.Sdata.freq*2*pi,obj.lambda_c);
+                   gam0 = rev_gamma_0(obj.Sdata.freq*2*pi,obj.lambda_c);
                    obj.Sdata.s21 = obj.Sdata.s21.*exp(-gam0*obj.L);
                    obj.Sdata.s12 = obj.Sdata.s12.*exp(-gam0*obj.L);
                end
@@ -55,11 +56,12 @@ classdef Sproc < handle
            %   raise warning if principal branch is verfiably incorrect
            % IncrementBranch: if true, check for discontinuities indicative of branch
            %   changes and increment branch from basebranch accordingly
+				import scatter_opt.*
                 if meth=='nrw'
-                    obj.PPdata = scatter_opt.nrw_extract(obj.Sdata,obj.L,obj.L_air,...
+                    obj.PPdata = nrw_extract(obj.Sdata,obj.L,obj.L_air,...
                         obj.lambda_c,varargin{:});
                 elseif meth=='nni'
-                    obj.PPdata = scatter_opt.nni_extract(obj.Sdata,obj.L,obj.L_air,...
+                    obj.PPdata = nni_extract(obj.Sdata,obj.L,obj.L_air,...
                         obj.lambda_c,varargin{:});
                 else
                     error('method must be nrw or nni')
@@ -69,26 +71,29 @@ classdef Sproc < handle
        % Data plotting
            function plot_PP(obj)
            % Plot extracted mu and epsilon vs. frequency
-               figure;scatter_opt.plot_PP(obj.PPdata);
+			   import scatter_opt.*
+               figure;plot_PP(obj.PPdata);
            end
            function plot_Sij(obj)
            % Plot all measured S parameters vs. frequency
-               figure;scatter_opt.plot_Sij(obj.Sdata);
+			   import scatter_opt.*
+               figure;plot_Sij(obj.Sdata);
            end
            function plot_Sreverse(obj)
            % plot the S parameters calculated from the reverse transform 
            % of the extracted mu and eps alongside the measured S parameters
-               rev_out = scatter_opt.rev_transform(obj.PPdata,obj.lambda_c,obj.L,0,0);
+			   import scatter_opt.*
+               rev_out = rev_transform(obj.PPdata,obj.lambda_c,obj.L,0,0);
                figure; ax1 = subplot(2,2,1); ax2 = subplot(2,2,2);
                ax3 = subplot(2,2,3); ax4 = subplot(2,2,4);
                axes11 = {ax1 ax2}; axes21 = {ax3 ax4};
-               scatter_opt.plot_rivf(obj.Sdata.freq,obj.Sdata.s11,axes11,'label','Measured');
-               scatter_opt.plot_rivf(rev_out.freq,rev_out.s11,axes11,'label','Reverse');
+               plot_rivf(obj.Sdata.freq,obj.Sdata.s11,axes11,'label','Measured');
+               plot_rivf(rev_out.freq,rev_out.s11,axes11,'label','Reverse');
                legend(ax1)
                title(ax1,'S11 Real')
                title(ax2,'S11 Imag')
-               scatter_opt.plot_rivf(obj.Sdata.freq,obj.Sdata.s21,axes21,'label','Measured');
-               scatter_opt.plot_rivf(rev_out.freq,rev_out.s21,axes21,'label','Reverse');
+               plot_rivf(obj.Sdata.freq,obj.Sdata.s21,axes21,'label','Measured');
+               plot_rivf(rev_out.freq,rev_out.s21,axes21,'label','Reverse');
                legend(ax3)
                title(ax3,'S21 Real')
                title(ax4,'S21 Imag')
@@ -110,7 +115,8 @@ classdef Sproc < handle
            % EvalSplits : number of CV splits to evaluate. Default 5
            % NPoles : number of poles to fit. If specified, MaxNumPoles will be 
            %   ignored and fit(s) will be performed only with NumPoles
-               initfits = scatter_opt.lm_initialfit(obj.PPdata,varargin{:})
+               import scatter_opt.*
+			   initfits = lm_initialfit(obj.PPdata,varargin{:})
                obj.lm_initfits = initfits;
                
            end
@@ -120,11 +126,12 @@ classdef Sproc < handle
            % ----------
            % field: which field to plot ('mu' or 'eps')
            % NPoles: number of poles
-               if strcmp(field,'mu')
-                   figure;scatter_opt.plot_ratfit(obj.lm_initfits.mu_fit(NPoles),...
+               import scatter_opt.*
+			   if strcmp(field,'mu')
+                   figure;plot_ratfit(obj.lm_initfits.mu_fit(NPoles),...
                        obj.PPdata.mu,obj.PPdata.freq,'FlipIm',true)
                elseif strcmp(field,'eps')
-                   figure;scatter_opt.plot_ratfit(obj.lm_initfits.eps_fit(NPoles),...
+                   figure;plot_ratfit(obj.lm_initfits.eps_fit(NPoles),...
                        obj.PPdata.eps,obj.PPdata.freq,'FlipIm',true)
                else
                    error('field must be ''mu'' or ''eps''')
@@ -143,13 +150,15 @@ classdef Sproc < handle
            %   overrides NPoles1
            % EpsNPoles1: number of 1st-order poles to use for eps. If specified,
            %   overrides NPoles1
+			   import scatter_opt.*
                [obj.mu_x0,obj.eps_x0,obj.mu_np1,obj.eps_np1,obj.np2] = ...
-                   scatter_opt.lm_estimate_x0(obj.PPdata,varargin{:});
+                   lm_estimate_x0(obj.PPdata,varargin{:});
            end 
            
            function lm_plot_initSfit(obj)
            % Plot initial fit of S parameters
-                tmpfit = struct;
+                import scatter_opt.*
+				tmpfit = struct;
                 tmpfit.x_mu = obj.mu_x0;
                 tmpfit.x_eps = obj.eps_x0;
                 tmpfit.mu_np1 = obj.mu_np1;
@@ -158,12 +167,13 @@ classdef Sproc < handle
                 tmpfit.eps_np2 = obj.np2;
                 tmpfit.lambda_c = obj.lambda_c;
                 tmpfit.L = obj.L; tmpfit.L1 = 0; tmpfit.L2 = obj.L_air-obj.L;
-                figure; scatter_opt.lm_plot_Sfit(tmpfit,obj.Sdata)
+                figure; lm_plot_Sfit(tmpfit,obj.Sdata)
            end
            
            function lm_plot_initPPfit(obj)
            % Plot initial fit of mu and epsilon
-                tmpfit = struct;
+                import scatter_opt.*
+				tmpfit = struct;
                 tmpfit.x_mu = obj.mu_x0;
                 tmpfit.x_eps = obj.eps_x0;
                 tmpfit.mu_np1 = obj.mu_np1;
@@ -172,7 +182,7 @@ classdef Sproc < handle
                 tmpfit.eps_np2 = obj.np2;
                 tmpfit.lambda_c = obj.lambda_c;
                 tmpfit.L = obj.L; tmpfit.L1 = 0; tmpfit.L2 = 0;
-                figure; scatter_opt.lm_plot_PPfit(tmpfit,obj.PPdata)
+                figure; lm_plot_PPfit(tmpfit,obj.PPdata)
            end
            
            function lm_lsqfit(obj,varargin)
@@ -192,25 +202,29 @@ classdef Sproc < handle
            % NCCP2 : number of complex conjugate pairs in second-order poles. 0 (real 
            %   2nd-order poles only) tends to work well, but in some cases complex
            %   2nd-order poles may be beneficial.
-               obj.wg_x0 = [obj.L 0 obj.lambda_c];
-               [obj.lmfit,obj.lm_internal] = scatter_opt.lm_lsqfit(obj.Sdata,obj.L_air,obj.L,...
+               import scatter_opt.*
+			   obj.wg_x0 = [obj.L 0 obj.lambda_c];
+               [obj.lmfit,obj.lm_internal] = lm_lsqfit(obj.Sdata,obj.L_air,obj.L,...
                    obj.mu_x0,obj.eps_x0,obj.wg_x0,obj.mu_np1,obj.eps_np1,...
                    obj.np2,varargin{:});
            end
            function lm_plot_Sfit(obj)
            % Plot LM fit of S parameters
-               figure;scatter_opt.lm_plot_Sfit(obj.lmfit,obj.Sdata)
+               import scatter_opt.*
+			   figure;lm_plot_Sfit(obj.lmfit,obj.Sdata)
            end
            function lm_plot_PPfit(obj)
            % Plot LM fit of mu and eps
-               figure;scatter_opt.lm_plot_PPfit(obj.lmfit,obj.PPdata)
+               import scatter_opt.*
+			   figure;lm_plot_PPfit(obj.lmfit,obj.PPdata)
            end
            function out = lm_output(obj,varargin)
            % Output data and model results. Save to file if specified
            % Named (optional) parameters
            % ---------------------------
            % SaveFile : file to save output to
-               out = scatter_opt.lm_output(obj.lmfit,obj.Sdata,obj.PPdata,...
+               import scatter_opt.*
+			   out = lm_output(obj.lmfit,obj.Sdata,obj.PPdata,...
                    'ExtractMethod',obj.extract_method,varargin{:});
            end
                
@@ -226,21 +240,24 @@ classdef Sproc < handle
            %   range. Defaults to 2
            % PoleFreq: pole frequencies. If specified, NPoles is ignored, and one pole
            %   is initialized at each frequency specified.
-               obj.eps_x0 = scatter_opt.de_estimate_x0(obj.PPdata,varargin{:});
+               import scatter_opt.*
+			   obj.eps_x0 = de_estimate_x0(obj.PPdata,varargin{:});
            end
            function de_plot_initPPfit(obj)
                % Plot initial fit of mu and epsilon
-                tmpfit = struct;
+                import scatter_opt.*
+				tmpfit = struct;
                 tmpfit.x_eps = obj.eps_x0;
-                figure; scatter_opt.de_plot_PPfit(tmpfit,obj.PPdata)
+                figure; de_plot_PPfit(tmpfit,obj.PPdata)
            end
            function de_plot_initSfit(obj)
                % Plot initial fit of mu and epsilon
-                tmpfit = struct;
+                import scatter_opt.*
+				tmpfit = struct;
                 tmpfit.x_eps = obj.eps_x0;
                 tmpfit.lambda_c = obj.lambda_c;
                 tmpfit.L = obj.L; tmpfit.L1 = 0; tmpfit.L2 = obj.L_air-obj.L;
-                figure; scatter_opt.de_plot_Sfit(tmpfit,obj.Sdata)
+                figure; de_plot_Sfit(tmpfit,obj.Sdata)
            end
 
            function de_lsqfit(obj,varargin)
@@ -253,24 +270,28 @@ classdef Sproc < handle
            %   points
            % MultiStartPoints : number of points from which to initialize the
            %   optimization
-               obj.wg_x0 = [obj.L 0 obj.lambda_c];
-               [obj.defit,obj.de_internal] = scatter_opt.de_lsqfit(obj.Sdata,obj.L_air,...
+               import scatter_opt.*
+			   obj.wg_x0 = [obj.L 0 obj.lambda_c];
+               [obj.defit,obj.de_internal] = de_lsqfit(obj.Sdata,obj.L_air,...
                    obj.L,obj.eps_x0,obj.wg_x0,varargin{:});
            end
            function de_plot_Sfit(obj)
            % Plot dielectric fit of S parameters
-               figure;scatter_opt.de_plot_Sfit(obj.defit,obj.Sdata)
+               import scatter_opt.*
+			   figure;de_plot_Sfit(obj.defit,obj.Sdata)
            end
            function de_plot_PPfit(obj)
            % Plot dielectric fit of S parameters
-               figure;scatter_opt.de_plot_PPfit(obj.defit,obj.PPdata)
+               import scatter_opt.*
+			   figure;de_plot_PPfit(obj.defit,obj.PPdata)
            end        
            function out = de_output(obj,varargin)
            % Output data and model results. Save to file if specified
            % Named (optional) parameters
            % ---------------------------
            % SaveFile : file to save output to
-               out = scatter_opt.de_output(obj.defit,obj.Sdata,obj.PPdata,...
+               import scatter_opt.*
+			   out = de_output(obj.defit,obj.Sdata,obj.PPdata,...
                    'ExtractMethod',obj.extract_method,varargin{:});
            end        
        end
